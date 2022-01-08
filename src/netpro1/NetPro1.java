@@ -6,11 +6,36 @@
 package netpro1;
 
 import java.io.*;
+import java.security.*;
+import java.util.*;
 
 /**
  *
- * @author Admin
+ * @author Software Engineer: Muhaimen Khatib
  */
+class Digester implements Runnable {
+
+    String filePath;
+    int arr[];
+    int runno;
+
+    public Digester(int runno, int arr[], String filePath) {
+        this.filePath = filePath;
+        this.arr = arr;
+        this.runno = runno;
+    }
+
+    @Override
+    public void run() {
+       
+        for (int x : arr) {
+            System.out.println(runno + " : " + x);
+        }
+
+    }
+
+}
+
 public class NetPro1 {
 
     /**
@@ -22,17 +47,30 @@ public class NetPro1 {
         String inFile = "src/TestingText/readingData.txt";
 
         BufferedWriter bufout = new BufferedWriter(new FileWriter(outFile));
-        
-        try {
-            
-            readFile(inFile);
-            
-        }catch (Exception ex) {
-            
-        } finally {
-            
-        }
 
+        Random random = new Random();
+
+        int[] array1 = random.ints(15, 10, 51).toArray();
+        int[] array2 = random.ints(15, 10, 51).toArray();
+        int[] array3 = random.ints(15, 10, 51).toArray();
+        
+        Thread dig1 = new Thread(new Digester(1,array1,""));
+        Thread dig2 = new Thread(new Digester(2,array2,""));
+        Thread dig3 = new Thread(new Digester(3,array3,""));
+        
+        dig1.start(); 
+        dig2.start();
+        dig3.start();
+        
+    }
+
+    public static void printArray(int array[]) {
+        System.out.print("[ ");
+        for (int x : array) {
+            System.out.print(x + ", ");
+        }
+        System.out.println(" ]");
+        //System.out.println(array.length);
     }
 
     public static void readFile(String fileName) throws IOException {
