@@ -8,6 +8,8 @@ package netpro1;
 import java.io.*;
 import java.security.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,21 +19,59 @@ class Digester implements Runnable {
 
     String filePath;
     int arr[];
-    int runno;
+    int runno, sum;
+    volatile public boolean isFinished = false;
+    NetPro1 obj;
 
-    public Digester(int runno, int arr[], String filePath) {
+    public Digester(int runno, int arr[], String filePath, NetPro1 obj) {
         this.filePath = filePath;
         this.arr = arr;
         this.runno = runno;
+        this.obj = obj;
     }
 
     @Override
     public void run() {
-       
-        for (int x : arr) {
-            System.out.println(runno + " : " + x);
+
+        BufferedReader bufin;
+        synchronized (this) {
+            try {
+                bufin = new BufferedReader(new FileReader(filePath));
+                String line = "";
+                while ((line = bufin.readLine()) != null) {
+                    sum += Integer.parseInt(line);
+                }
+                //isFinished = true;
+                NetPro1.maxSum(sum);
+                //obj.getInfoRef(sum, filePath);
+                bufin.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+
+            }
         }
 
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public int[] getArr() {
+        return arr;
+    }
+
+    public int getRunno() {
+        return runno;
+    }
+
+    public int getSum() {
+        return sum;
+    }
+
+    public boolean isIsFinished() {
+        return isFinished;
     }
 
 }
@@ -41,36 +81,38 @@ public class NetPro1 {
     /**
      * @param args the command line arguments
      */
+    static int c = 0;
+    static int max;
+    int counter = 0;
+
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
         String outFile = "src/TestingText/writingData.txt";
         String inFile = "src/TestingText/readingData.txt";
 
-        BufferedWriter bufout = new BufferedWriter(new FileWriter(outFile));
+        writeFile("src/TestingText/file1.txt");
+        writeFile("src/TestingText/file2.txt");
+        writeFile("src/TestingText/file3.txt");
 
-        Random random = new Random();
+        NetPro1 obj = new NetPro1();
 
-        int[] array1 = random.ints(15, 10, 51).toArray();
-        int[] array2 = random.ints(15, 10, 51).toArray();
-        int[] array3 = random.ints(15, 10, 51).toArray();
-        
-        Thread dig1 = new Thread(new Digester(1,array1,""));
-        Thread dig2 = new Thread(new Digester(2,array2,""));
-        Thread dig3 = new Thread(new Digester(3,array3,""));
-        
-        dig1.start(); 
+        //System.out.println(Arrays.toString(array1));
+        Digester obj1 = new Digester(1, null, "src/TestingText/file1.txt", obj);
+        Digester obj2 = new Digester(2, null, "src/TestingText/file2.txt", obj);
+        Digester obj3 = new Digester(3, null, "src/TestingText/file3.txt", obj);
+
+        Thread dig1 = new Thread(obj1);
+        Thread dig2 = new Thread(obj2);
+        Thread dig3 = new Thread(obj3);
+
+        dig1.start();
         dig2.start();
         dig3.start();
-        
-    }
 
-    public static void printArray(int array[]) {
-        System.out.print("[ ");
-        for (int x : array) {
-            System.out.print(x + ", ");
-        }
-        System.out.println(" ]");
-        //System.out.println(array.length);
+        //while (!obj1.isFinished || !obj2.isFinished || !obj3.isFinished);
+        //System.out.println("sum ob1 = " + obj1.sum);
+        //System.out.println("sum ob2 = " + obj2.sum);
+        //System.out.println("sum ob3 = " + obj3.sum);
     }
 
     public static void readFile(String fileName) throws IOException {
@@ -79,6 +121,20 @@ public class NetPro1 {
         while ((line = bufin.readLine()) != null) {
             System.out.println(line);
         }
+    }
+
+    public static void writeFile(String fileName) throws IOException {
+        Random random = new Random();
+        int randomlyNums[] = random.ints(10000, 10, 500).toArray();
+        //System.out.println("sum of " + fileName + " = " + sumOfarray(randomlyNums));
+        BufferedWriter bufout = new BufferedWriter(new FileWriter(fileName));
+
+        for (int i = 0; i < 10000; i++) {
+            bufout.write(randomlyNums[i] + "\n");
+        }
+        bufout.flush();
+        bufout.close();
+
     }
 
     public static void generateCharacters(OutputStream out) throws Exception {
@@ -93,7 +149,36 @@ public class NetPro1 {
             out.write(s1);
             out.write('\r'); // carriage return
             out.write('\n'); // linefeed
-
         }
+    }
+
+    public static void maxSum(int sum) {
+        if (c++ == 0) {
+            max = sum;
+        } else if (sum > max) {
+            max = sum;
+        } else if (c == 3) {
+            System.out.println("the max = " + max);
+        }
+    }
+
+    public static int sumOfarray(int arr[]) {
+
+        int sum = 0;
+        for (int x : arr) {
+            sum += x;
+        }
+        return sum;
+    }
+
+    public void getInfoRef(int s, String name) {
+        counter++;
+        System.out.println(name + "\t" + s);
+
+        if (counter == 3) {
+            System.out.println("done ref method");
+        }
+
+        System.out.println("counter : " + counter);
     }
 }
