@@ -167,40 +167,52 @@ public class NetPro1 {
 //          
 //          //Finishing all processes -Done
 //          service.shutdown();
-        //byte [] addr = {(byte)192,(byte)168,(byte)1,(byte)1}; //IP = 192.168.1.1
+        // //IP = 192.168.1.1
 //            InetAddress ina[] = InetAddress.getAllByName("www.netflix.com");
 //            
 //            for (InetAddress ip:ina)
 //                System.out.println(ip.getHostAddress());
-        ArrayList<AllIPsByName> links = new ArrayList<AllIPsByName>();
-        int sum = 0;
-        BufferedReader bufin = new BufferedReader(new FileReader("src/TestingText/readingData.txt"));
-        String line = "";
-        while ((line = bufin.readLine()) != null) {
-            links.add(new AllIPsByName(line));
-        }
+//        ArrayList<AllIPsByName> links = new ArrayList<AllIPsByName>();
+//        int sum = 0;
+//        BufferedReader bufin = new BufferedReader(new FileReader("src/TestingText/readingData.txt"));
+//        String line = "";
+//        while ((line = bufin.readLine()) != null) {
+//            links.add(new AllIPsByName(line));
+//        }
+//
+//        //1- objects<> 2- pool() 3- futures<>
+//        ExecutorService svc = Executors.newFixedThreadPool(links.size());
+//
+//        ArrayList<Future> tasks = new ArrayList<Future>();
+//
+//        for (AllIPsByName ipsOflink : links) {
+//            tasks.add(svc.submit(ipsOflink));
+//        }
+//        int numObjects = 0;
+//        for (Future task : tasks) {
+//            InetAddress[] iness = (InetAddress[]) task.get();
+//            System.out.println('\n' + links.get(numObjects).link + '\n' + "#___________________________#");
+//            System.out.println();
+//            for (InetAddress ip : iness) {
+//                System.out.println(ip.getHostAddress());
+//            }
+//            numObjects++;
+//        }
+//        
+//
+//        svc.shutdown();
+        byte addr[] = new byte[]{(byte) 192, (byte) 168, 1, 103};
+        NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByAddress(addr));
+        System.out.println(ni.getDisplayName());
 
-        //1- objects<> 2- pool() 3- futures<>
-        ExecutorService svc = Executors.newFixedThreadPool(links.size());
-
-        ArrayList<Future> tasks = new ArrayList<Future>();
-
-        for (AllIPsByName ipsOflink : links) {
-            tasks.add(svc.submit(ipsOflink));
-        }
-        int numObjects = 0;
-        for (Future task : tasks) {
-            InetAddress[] iness = (InetAddress[]) task.get();
-            System.out.println('\n' + links.get(numObjects).link + '\n' + "#___________________________#");
-            System.out.println();
-            for (InetAddress ip : iness) {
-                System.out.println(ip.getHostAddress());
-            }
-            numObjects++;
-        }
-
-        svc.shutdown();
-
+//        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+//        NetworkInterface inter;
+//        while (interfaces.hasMoreElements()) {
+//            inter = interfaces.nextElement();
+//            System.out.println(inter.getInterfaceAddresses() );
+//        }
+        
+        System.out.println(NetworkInterface.getByIndex(12).getDisplayName());
     }
 
     public static void readFile(String fileName) throws Exception {
