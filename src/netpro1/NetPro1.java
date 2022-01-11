@@ -11,6 +11,7 @@ import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.*;
+import java.util.regex.*;
 
 /**
  *
@@ -105,6 +106,43 @@ class Digester implements Runnable {
 
 }
 
+class WebsiteToHTML implements Callable<Void> {
+
+    URL link;
+
+    public WebsiteToHTML(URL link) {
+        this.link = link;
+    }
+
+    public Void call() throws Exception {
+
+        BufferedInputStream br = new BufferedInputStream(link.openStream());
+
+        //BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Admin\\Desktop\\FALL 2021-2022\\NETWORKS PROGRAMMING\\linksdown\\" + getWebsitename() + ".html"));
+        byte data[] = br.readAllBytes();
+        //bw.write(new String(data), 0, data.length);
+        System.out.println(new String(data));
+        //bw.flush();
+        //bw.close();
+        br.close();
+
+        return null;
+    }
+
+    String getWebsitename() {
+        
+        Pattern pattern = Pattern.compile("((\\.).+?(\\.))");
+        
+        Matcher matcher = pattern.matcher(link.getHost());
+        
+        boolean found = false;
+        //if (!found) return "notFound"+Math.random(); 
+        matcher.find();
+        String str = matcher.group();
+        return str.substring(1,str.length()-1);
+    }
+}
+
 public class NetPro1 {
 
     /**
@@ -116,34 +154,28 @@ public class NetPro1 {
 
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-//        String link = "https://www.aaup.edu";
-//        String linktest = "https://ahmad@google.com:8750/news/sport/view.aspx?n=4&g=w";
-        String covertingLink = "https://www.xe.com/ar/currencyconverter/convert/?Amount=1&From=USD&To=ILS";
-        URL url = new URL(covertingLink);
-        System.out.println(url);
-//        System.out.println(url.getAuthority());
-//        System.out.println(url.getContent());
-//        System.out.println(CC.GREEN_BACKGROUND +url.getDefaultPort());
-//        System.out.println(url.getFile());
-//        System.out.println(url.getHost());
-//        System.out.println(url.getPath());
-//        System.out.println(CC.GREEN_BACKGROUND + url.getPort());
-//        System.out.println(url.getProtocol());
-//        System.out.println(url.getQuery());
-//        System.out.println(CC.GREEN_BACKGROUND +url.getRef());
-//        System.out.println(url.getUserInfo());
-        
-        
+        ArrayList<URL> links = readFile("src\\TestingText\\readingData.txt");
 
+        ExecutorService svc = Executors.newFixedThreadPool(links.size());
+
+        ArrayList<Future> tasks = new ArrayList<Future>();
+
+        for (URL url : links) {
+            tasks.add(svc.submit(new WebsiteToHTML(url)));
+        }
+
+        svc.shutdown();
     }
 
-    public static void readFile(String fileName) throws Exception {
+    public static ArrayList<URL> readFile(String fileName) throws Exception {
 
+        ArrayList<URL> links = new ArrayList<URL>();
         BufferedReader bufin = new BufferedReader(new FileReader(fileName));
         String line = "";
         while ((line = bufin.readLine()) != null) {
-            System.out.println(line);
+            links.add(new URL(line));
         }
+        return links;
 
     }
 
