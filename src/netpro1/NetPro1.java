@@ -6,6 +6,7 @@
 package netpro1;
 
 import java.io.*;
+import java.net.*;
 import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -15,7 +16,20 @@ import java.util.logging.*;
  *
  * @author Software Engineer: Muhaimen Khatib
  */
-class Grinder implements Callable<Void> {
+class AllIPsByName implements Callable<InetAddress[]> {
+
+    String link;
+
+    public AllIPsByName(String link) {
+        this.link = link;
+    }
+
+    public synchronized InetAddress[] call() throws Exception {
+        return InetAddress.getAllByName(link);
+    }
+}
+
+class Grinder implements Callable<ArrayList<AllIPsByName>> {
 
     String filePath;
 
@@ -23,16 +37,10 @@ class Grinder implements Callable<Void> {
         this.filePath = filePath;
     }
 
-    public Void call() throws Exception {
-        int sum = 0;
-        BufferedReader bufin = new BufferedReader(new FileReader(filePath));
-        String line = "";
-        while ((line = bufin.readLine()) != null) {
-            System.out.println(filePath + " : " + line );
-            sum += Integer.parseInt(line);
-        }
-        //return sum;
-        return null;
+    public ArrayList<AllIPsByName> call() throws Exception {
+        ArrayList<AllIPsByName> links = new ArrayList<AllIPsByName>();
+
+        return links;
     }
 
 }
@@ -135,39 +143,74 @@ public class NetPro1 {
 //        System.out.println("sum ob2 = " + obj2.sum);
 //        System.out.println("sum ob3 = " + obj3.sum);
 
-          //Initialize an objects of callable inerfacing Grinder class
-          int numOfthreads = 3;
-          Grinder g1 = new Grinder ("src/TestingText/file1.txt");
-          Grinder g2 = new Grinder ("src/TestingText/file2.txt");
-          Grinder g3 = new Grinder ("src/TestingText/file3.txt");
-          
-          //Reserve a number of pool executors
-          ExecutorService service = Executors.newFixedThreadPool(numOfthreads);
-          
-          //Making threading processes using Future class to submit grinder objects togother
-          
-          Future <Void> x1 = service.submit(g1);
-          Future <Void> x2 = service.submit(g2);
-          Future <Void> x3 = service.submit(g3);
-          
-          //ready to get the data from processes
-          
+//          //Initialize an objects of callable inerfacing Grinder class
+//          int numOfthreads = 3;
+//          Grinder g1 = new Grinder ("src/TestingText/file1.txt");
+//          Grinder g2 = new Grinder ("src/TestingText/file2.txt");
+//          Grinder g3 = new Grinder ("src/TestingText/file3.txt");
+//          
+//          //Reserve a number of pool executors
+//          ExecutorService service = Executors.newFixedThreadPool(numOfthreads);
+//          
+//          //Making threading processes using Future class to submit grinder objects togother
+//          
+//          Future <Integer> x1 = service.submit(g1);
+//          Future <Integer> x2 = service.submit(g2);
+//          Future <Integer> x3 = service.submit(g3);
+//          
+//          //ready to get the data from processes
+//          
 //          System.out.println(x1.get());
 //          System.out.println(x2.get());
 //          System.out.println(x3.get());
 //          
-          
-          //Finishing all processes -Done
-          service.shutdown();
-          
+//          
+//          //Finishing all processes -Done
+//          service.shutdown();
+        //byte [] addr = {(byte)192,(byte)168,(byte)1,(byte)1}; //IP = 192.168.1.1
+//            InetAddress ina[] = InetAddress.getAllByName("www.netflix.com");
+//            
+//            for (InetAddress ip:ina)
+//                System.out.println(ip.getHostAddress());
+        ArrayList<AllIPsByName> links = new ArrayList<AllIPsByName>();
+        int sum = 0;
+        BufferedReader bufin = new BufferedReader(new FileReader("src/TestingText/readingData.txt"));
+        String line = "";
+        while ((line = bufin.readLine()) != null) {
+            links.add(new AllIPsByName(line));
+        }
+
+        //1- objects<> 2- pool() 3- futures<>
+        ExecutorService svc = Executors.newFixedThreadPool(links.size());
+
+        ArrayList<Future> tasks = new ArrayList<Future>();
+
+        for (AllIPsByName ipsOflink : links) {
+            tasks.add(svc.submit(ipsOflink));
+        }
+        int numObjects = 0;
+        for (Future task : tasks) {
+            InetAddress[] iness = (InetAddress[]) task.get();
+            System.out.println('\n' + links.get(numObjects).link + '\n' + "#___________________________#");
+            System.out.println();
+            for (InetAddress ip : iness) {
+                System.out.println(ip.getHostAddress());
+            }
+            numObjects++;
+        }
+
+        svc.shutdown();
+
     }
 
-    public static void readFile(String fileName) throws IOException {
+    public static void readFile(String fileName) throws Exception {
+
         BufferedReader bufin = new BufferedReader(new FileReader(fileName));
         String line = "";
         while ((line = bufin.readLine()) != null) {
             System.out.println(line);
         }
+
     }
 
     public static void writeFile(String fileName) throws IOException {
@@ -179,6 +222,7 @@ public class NetPro1 {
         for (int i = 0; i < 10000; i++) {
             bufout.write(randomlyNums[i] + "\n");
         }
+
         bufout.flush();
         bufout.close();
 
@@ -191,11 +235,11 @@ public class NetPro1 {
         int start = firstPrintableCharacter;
         byte s1[] = {97, 98, 99};
         //the same as (char)97
-        /* infinite loop */
+
         for (int i = start; i < start + numberOfCharactersPerLine; i++) {
             out.write(s1);
-            out.write('\r'); // carriage return
-            out.write('\n'); // linefeed
+            out.write('\r');
+            out.write('\n');
         }
     }
 
