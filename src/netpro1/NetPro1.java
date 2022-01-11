@@ -8,13 +8,35 @@ package netpro1;
 import java.io.*;
 import java.security.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.*;
+import java.util.logging.*;
 
 /**
  *
  * @author Software Engineer: Muhaimen Khatib
  */
+class Grinder implements Callable<Void> {
+
+    String filePath;
+
+    public Grinder(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public Void call() throws Exception {
+        int sum = 0;
+        BufferedReader bufin = new BufferedReader(new FileReader(filePath));
+        String line = "";
+        while ((line = bufin.readLine()) != null) {
+            System.out.println(filePath + " : " + line );
+            sum += Integer.parseInt(line);
+        }
+        //return sum;
+        return null;
+    }
+
+}
+
 class Digester implements Runnable {
 
     String filePath;
@@ -34,22 +56,21 @@ class Digester implements Runnable {
     public void run() {
 
         BufferedReader bufin;
-        synchronized (this) {
-            try {
-                bufin = new BufferedReader(new FileReader(filePath));
-                String line = "";
-                while ((line = bufin.readLine()) != null) {
-                    sum += Integer.parseInt(line);
-                }
-                //isFinished = true;
-                NetPro1.maxSum(sum);
-                //obj.getInfoRef(sum, filePath);
-                bufin.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            } finally {
 
+        try {
+            bufin = new BufferedReader(new FileReader(filePath));
+            String line = "";
+            while ((line = bufin.readLine()) != null) {
+                sum += Integer.parseInt(line);
             }
+            //isFinished = true;
+            NetPro1.maxSum(sum);
+            //obj.getInfoRef(sum, filePath);
+            bufin.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+
         }
 
     }
@@ -87,32 +108,58 @@ public class NetPro1 {
 
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        String outFile = "src/TestingText/writingData.txt";
-        String inFile = "src/TestingText/readingData.txt";
+//        String outFile = "src/TestingText/writingData.txt";
+//        String inFile = "src/TestingText/readingData.txt";
+//
+//        writeFile("src/TestingText/file1.txt");
+//        writeFile("src/TestingText/file2.txt");
+//        writeFile("src/TestingText/file3.txt");
+//
+//        NetPro1 obj = new NetPro1();
+//
+//        //System.out.println(Arrays.toString(array1));
+//        Digester obj1 = new Digester(1, null, "src/TestingText/file1.txt", obj);
+//        Digester obj2 = new Digester(2, null, "src/TestingText/file2.txt", obj);
+//        Digester obj3 = new Digester(3, null, "src/TestingText/file3.txt", obj);
+//
+//        Thread dig1 = new Thread(obj1);
+//        Thread dig2 = new Thread(obj2);
+//        Thread dig3 = new Thread(obj3);
+//
+//        dig1.start();
+//        dig2.start();
+//        dig3.start();
+//
+//        while (!obj1.isFinished || !obj2.isFinished || !obj3.isFinished);
+//        System.out.println("sum ob1 = " + obj1.sum);
+//        System.out.println("sum ob2 = " + obj2.sum);
+//        System.out.println("sum ob3 = " + obj3.sum);
 
-        writeFile("src/TestingText/file1.txt");
-        writeFile("src/TestingText/file2.txt");
-        writeFile("src/TestingText/file3.txt");
-
-        NetPro1 obj = new NetPro1();
-
-        //System.out.println(Arrays.toString(array1));
-        Digester obj1 = new Digester(1, null, "src/TestingText/file1.txt", obj);
-        Digester obj2 = new Digester(2, null, "src/TestingText/file2.txt", obj);
-        Digester obj3 = new Digester(3, null, "src/TestingText/file3.txt", obj);
-
-        Thread dig1 = new Thread(obj1);
-        Thread dig2 = new Thread(obj2);
-        Thread dig3 = new Thread(obj3);
-
-        dig1.start();
-        dig2.start();
-        dig3.start();
-
-        //while (!obj1.isFinished || !obj2.isFinished || !obj3.isFinished);
-        //System.out.println("sum ob1 = " + obj1.sum);
-        //System.out.println("sum ob2 = " + obj2.sum);
-        //System.out.println("sum ob3 = " + obj3.sum);
+          //Initialize an objects of callable inerfacing Grinder class
+          int numOfthreads = 3;
+          Grinder g1 = new Grinder ("src/TestingText/file1.txt");
+          Grinder g2 = new Grinder ("src/TestingText/file2.txt");
+          Grinder g3 = new Grinder ("src/TestingText/file3.txt");
+          
+          //Reserve a number of pool executors
+          ExecutorService service = Executors.newFixedThreadPool(numOfthreads);
+          
+          //Making threading processes using Future class to submit grinder objects togother
+          
+          Future <Void> x1 = service.submit(g1);
+          Future <Void> x2 = service.submit(g2);
+          Future <Void> x3 = service.submit(g3);
+          
+          //ready to get the data from processes
+          
+//          System.out.println(x1.get());
+//          System.out.println(x2.get());
+//          System.out.println(x3.get());
+//          
+          
+          //Finishing all processes -Done
+          service.shutdown();
+          
     }
 
     public static void readFile(String fileName) throws IOException {
