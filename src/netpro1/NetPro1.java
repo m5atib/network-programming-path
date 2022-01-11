@@ -116,103 +116,25 @@ public class NetPro1 {
 
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-//        String outFile = "src/TestingText/writingData.txt";
-//        String inFile = "src/TestingText/readingData.txt";
-//
-//        writeFile("src/TestingText/file1.txt");
-//        writeFile("src/TestingText/file2.txt");
-//        writeFile("src/TestingText/file3.txt");
-//
-//        NetPro1 obj = new NetPro1();
-//
-//        //System.out.println(Arrays.toString(array1));
-//        Digester obj1 = new Digester(1, null, "src/TestingText/file1.txt", obj);
-//        Digester obj2 = new Digester(2, null, "src/TestingText/file2.txt", obj);
-//        Digester obj3 = new Digester(3, null, "src/TestingText/file3.txt", obj);
-//
-//        Thread dig1 = new Thread(obj1);
-//        Thread dig2 = new Thread(obj2);
-//        Thread dig3 = new Thread(obj3);
-//
-//        dig1.start();
-//        dig2.start();
-//        dig3.start();
-//
-//        while (!obj1.isFinished || !obj2.isFinished || !obj3.isFinished);
-//        System.out.println("sum ob1 = " + obj1.sum);
-//        System.out.println("sum ob2 = " + obj2.sum);
-//        System.out.println("sum ob3 = " + obj3.sum);
-
-//          //Initialize an objects of callable inerfacing Grinder class
-//          int numOfthreads = 3;
-//          Grinder g1 = new Grinder ("src/TestingText/file1.txt");
-//          Grinder g2 = new Grinder ("src/TestingText/file2.txt");
-//          Grinder g3 = new Grinder ("src/TestingText/file3.txt");
-//          
-//          //Reserve a number of pool executors
-//          ExecutorService service = Executors.newFixedThreadPool(numOfthreads);
-//          
-//          //Making threading processes using Future class to submit grinder objects togother
-//          
-//          Future <Integer> x1 = service.submit(g1);
-//          Future <Integer> x2 = service.submit(g2);
-//          Future <Integer> x3 = service.submit(g3);
-//          
-//          //ready to get the data from processes
-//          
-//          System.out.println(x1.get());
-//          System.out.println(x2.get());
-//          System.out.println(x3.get());
-//          
-//          
-//          //Finishing all processes -Done
-//          service.shutdown();
-        // //IP = 192.168.1.1
-//            InetAddress ina[] = InetAddress.getAllByName("www.netflix.com");
-//            
-//            for (InetAddress ip:ina)
-//                System.out.println(ip.getHostAddress());
-//        ArrayList<AllIPsByName> links = new ArrayList<AllIPsByName>();
-//        int sum = 0;
-//        BufferedReader bufin = new BufferedReader(new FileReader("src/TestingText/readingData.txt"));
-//        String line = "";
-//        while ((line = bufin.readLine()) != null) {
-//            links.add(new AllIPsByName(line));
-//        }
-//
-//        //1- objects<> 2- pool() 3- futures<>
-//        ExecutorService svc = Executors.newFixedThreadPool(links.size());
-//
-//        ArrayList<Future> tasks = new ArrayList<Future>();
-//
-//        for (AllIPsByName ipsOflink : links) {
-//            tasks.add(svc.submit(ipsOflink));
-//        }
-//        int numObjects = 0;
-//        for (Future task : tasks) {
-//            InetAddress[] iness = (InetAddress[]) task.get();
-//            System.out.println('\n' + links.get(numObjects).link + '\n' + "#___________________________#");
-//            System.out.println();
-//            for (InetAddress ip : iness) {
-//                System.out.println(ip.getHostAddress());
-//            }
-//            numObjects++;
-//        }
-//        
-//
-//        svc.shutdown();
-        byte addr[] = new byte[]{(byte) 192, (byte) 168, 1, 103};
-        NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getByAddress(addr));
-        System.out.println(ni.getDisplayName());
-
-//        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-//        NetworkInterface inter;
-//        while (interfaces.hasMoreElements()) {
-//            inter = interfaces.nextElement();
-//            System.out.println(inter.getInterfaceAddresses() );
-//        }
+//        String link = "https://www.aaup.edu";
+//        String linktest = "https://ahmad@google.com:8750/news/sport/view.aspx?n=4&g=w";
+        String covertingLink = "https://www.xe.com/ar/currencyconverter/convert/?Amount=1&From=USD&To=ILS";
+        URL url = new URL(covertingLink);
+        System.out.println(url);
+//        System.out.println(url.getAuthority());
+//        System.out.println(url.getContent());
+//        System.out.println(CC.GREEN_BACKGROUND +url.getDefaultPort());
+//        System.out.println(url.getFile());
+//        System.out.println(url.getHost());
+//        System.out.println(url.getPath());
+//        System.out.println(CC.GREEN_BACKGROUND + url.getPort());
+//        System.out.println(url.getProtocol());
+//        System.out.println(url.getQuery());
+//        System.out.println(CC.GREEN_BACKGROUND +url.getRef());
+//        System.out.println(url.getUserInfo());
         
-        System.out.println(NetworkInterface.getByIndex(12).getDisplayName());
+        
+
     }
 
     public static void readFile(String fileName) throws Exception {
@@ -284,4 +206,80 @@ public class NetPro1 {
 
         System.out.println("counter : " + counter);
     }
+}
+
+class CC {
+
+    // Reset
+    public static final String RESET = "\033[0m";  // Text Reset
+
+    // Regular Colors
+    public static final String BLACK = "\033[0;30m";   // BLACK
+    public static final String RED = "\033[0;31m";     // RED
+    public static final String GREEN = "\033[0;32m";   // GREEN
+    public static final String YELLOW = "\033[0;33m";  // YELLOW
+    public static final String BLUE = "\033[0;34m";    // BLUE
+    public static final String PURPLE = "\033[0;35m";  // PURPLE
+    public static final String CYAN = "\033[0;36m";    // CYAN
+    public static final String WHITE = "\033[0;37m";   // WHITE
+
+    // Bold
+    public static final String BLACK_BOLD = "\033[1;30m";  // BLACK
+    public static final String RED_BOLD = "\033[1;31m";    // RED
+    public static final String GREEN_BOLD = "\033[1;32m";  // GREEN
+    public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
+    public static final String BLUE_BOLD = "\033[1;34m";   // BLUE
+    public static final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
+    public static final String CYAN_BOLD = "\033[1;36m";   // CYAN
+    public static final String WHITE_BOLD = "\033[1;37m";  // WHITE
+
+    // Underline
+    public static final String BLACK_UNDERLINED = "\033[4;30m";  // BLACK
+    public static final String RED_UNDERLINED = "\033[4;31m";    // RED
+    public static final String GREEN_UNDERLINED = "\033[4;32m";  // GREEN
+    public static final String YELLOW_UNDERLINED = "\033[4;33m"; // YELLOW
+    public static final String BLUE_UNDERLINED = "\033[4;34m";   // BLUE
+    public static final String PURPLE_UNDERLINED = "\033[4;35m"; // PURPLE
+    public static final String CYAN_UNDERLINED = "\033[4;36m";   // CYAN
+    public static final String WHITE_UNDERLINED = "\033[4;37m";  // WHITE
+
+    // Background
+    public static final String BLACK_BACKGROUND = "\033[40m";  // BLACK
+    public static final String RED_BACKGROUND = "\033[41m";    // RED
+    public static final String GREEN_BACKGROUND = "\033[42m";  // GREEN
+    public static final String YELLOW_BACKGROUND = "\033[43m"; // YELLOW
+    public static final String BLUE_BACKGROUND = "\033[44m";   // BLUE
+    public static final String PURPLE_BACKGROUND = "\033[45m"; // PURPLE
+    public static final String CYAN_BACKGROUND = "\033[46m";   // CYAN
+    public static final String WHITE_BACKGROUND = "\033[47m";  // WHITE
+
+    // High Intensity
+    public static final String BLACK_BRIGHT = "\033[0;90m";  // BLACK
+    public static final String RED_BRIGHT = "\033[0;91m";    // RED
+    public static final String GREEN_BRIGHT = "\033[0;92m";  // GREEN
+    public static final String YELLOW_BRIGHT = "\033[0;93m"; // YELLOW
+    public static final String BLUE_BRIGHT = "\033[0;94m";   // BLUE
+    public static final String PURPLE_BRIGHT = "\033[0;95m"; // PURPLE
+    public static final String CYAN_BRIGHT = "\033[0;96m";   // CYAN
+    public static final String WHITE_BRIGHT = "\033[0;97m";  // WHITE
+
+    // Bold High Intensity
+    public static final String BLACK_BOLD_BRIGHT = "\033[1;90m"; // BLACK
+    public static final String RED_BOLD_BRIGHT = "\033[1;91m";   // RED
+    public static final String GREEN_BOLD_BRIGHT = "\033[1;92m"; // GREEN
+    public static final String YELLOW_BOLD_BRIGHT = "\033[1;93m";// YELLOW
+    public static final String BLUE_BOLD_BRIGHT = "\033[1;94m";  // BLUE
+    public static final String PURPLE_BOLD_BRIGHT = "\033[1;95m";// PURPLE
+    public static final String CYAN_BOLD_BRIGHT = "\033[1;96m";  // CYAN
+    public static final String WHITE_BOLD_BRIGHT = "\033[1;97m"; // WHITE
+
+    // High Intensity backgrounds
+    public static final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";// BLACK
+    public static final String RED_BACKGROUND_BRIGHT = "\033[0;101m";// RED
+    public static final String GREEN_BACKGROUND_BRIGHT = "\033[0;102m";// GREEN
+    public static final String YELLOW_BACKGROUND_BRIGHT = "\033[0;103m";// YELLOW
+    public static final String BLUE_BACKGROUND_BRIGHT = "\033[0;104m";// BLUE
+    public static final String PURPLE_BACKGROUND_BRIGHT = "\033[0;105m"; // PURPLE
+    public static final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";  // CYAN
+    public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
 }
