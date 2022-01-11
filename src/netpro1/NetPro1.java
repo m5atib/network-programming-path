@@ -5,6 +5,7 @@
  */
 package netpro1;
 
+import java.awt.image.*;
 import java.io.*;
 import java.net.*;
 import java.security.*;
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.*;
 import java.util.regex.*;
+import javax.imageio.*;
 
 /**
  *
@@ -117,29 +119,27 @@ class WebsiteToHTML implements Callable<Void> {
     public Void call() throws Exception {
 
         BufferedInputStream br = new BufferedInputStream(link.openStream());
-
-        //BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Admin\\Desktop\\FALL 2021-2022\\NETWORKS PROGRAMMING\\linksdown\\" + getWebsitename() + ".html"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Admin\\Desktop\\FALL 2021-2022\\NETWORKS PROGRAMMING\\linksdown\\" + getWebsitename() + ".html"));
         byte data[] = br.readAllBytes();
-        //bw.write(new String(data), 0, data.length);
-        System.out.println(new String(data));
-        //bw.flush();
-        //bw.close();
+        bw.write(new String(data), 0, data.length);
+        bw.flush();
+        bw.close();
         br.close();
 
         return null;
     }
 
     String getWebsitename() {
-        
+
         Pattern pattern = Pattern.compile("((\\.).+?(\\.))");
-        
+
         Matcher matcher = pattern.matcher(link.getHost());
-        
+
         boolean found = false;
         //if (!found) return "notFound"+Math.random(); 
         matcher.find();
         String str = matcher.group();
-        return str.substring(1,str.length()-1);
+        return str.substring(1, str.length() - 1);
     }
 }
 
@@ -153,18 +153,45 @@ public class NetPro1 {
     int counter = 0;
 
     public static void main(String[] args) throws Exception {
-        // TODO code application logic here
-        ArrayList<URL> links = readFile("src\\TestingText\\readingData.txt");
+//        // TODO code application logic here
+//        ArrayList<URL> links = readFile("src\\TestingText\\readingData.txt");
+//
+//        ExecutorService svc = Executors.newFixedThreadPool(links.size());
+//
+//        ArrayList<Future> tasks = new ArrayList<Future>();
+//
+//        for (URL url : links) {
+//            tasks.add(svc.submit(new WebsiteToHTML(url)));
+//        }
+//
+//        svc.shutdown();
+        //URL url = new URL ("https://media.istockphoto.com/vectors/fist-male-hand-proletarian-protest-symbol-power-sign-vector-id1178279449?k=20&m=1178279449&s=612x612&w=0&h=OdQI83e-5Gk3wMoK0lNcLbGFAYmyR7--5s7nC6VLTNQ=");
+        //System.out.println(url.getContent().getClass().get);
+        //String str = ".Muhaimen.";
+        //System.out.println(str.substring(str.indexOf('.')+1, str.lastIndexOf('.')));
+        //BufferedImage bimg = ImageIO.read(url);
+        //ImageIO.write(bimg, "jpg", new File("src\\img1.jpg"));
 
-        ExecutorService svc = Executors.newFixedThreadPool(links.size());
-
-        ArrayList<Future> tasks = new ArrayList<Future>();
-
-        for (URL url : links) {
-            tasks.add(svc.submit(new WebsiteToHTML(url)));
-        }
-
-        svc.shutdown();
+        //String link = "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4?fbclid=IwAR1f4u7n4w4iH8oykfyPmo8MOZIwz97fKMN9R2gn90IpRRpBj3RdeTIdyAY";       
+        //new BufferedOutputStream(new FileOutputStream("src\\vid.mp4")).write(new BufferedInputStream(new URL(link).openStream()).readAllBytes());
+//        ArrayList<Integer> nums = new ArrayList<Integer>();
+//        nums.add(5);
+//        nums.add(9);
+//        nums.add(8);
+//        nums.add(1);
+//        nums.forEach((n) -> System.out.print(n));
+        //download website page in one row 
+//        new BufferedOutputStream(new FileOutputStream("src\\website.html"))
+//                .write(new BufferedInputStream(new URL("https://www.javatpoint.com/java-regex").openStream()).readAllBytes());
+//        String lofVid = "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4?fbclid=IwAR1f4u7n4w4iH8oykfyPmo8MOZIwz97fKMN9R2gn90IpRRpBj3RdeTIdyAY";
+        //download a video in one row 
+//        new BufferedOutputStream(new FileOutputStream("src\\vid2.mp4"))
+//                .write(new BufferedInputStream(new URL(lofVid).openStream()).readAllBytes());
+        
+        String link = "https://www.w3schools.com/images/htmlvideoad_footer.png";
+        
+        //download an image in one row
+        ImageIO.write(ImageIO.read(new URL(link)),"png",new File("src\\img.png"));
     }
 
     public static ArrayList<URL> readFile(String fileName) throws Exception {
